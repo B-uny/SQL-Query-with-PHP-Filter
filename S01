@@ -1,0 +1,44 @@
+<?php
+
+//on ajax POST of user defined var 
+if(isset($_POST['msg'])){
+//include the SQL configuration and request
+include('configFiles.php');
+
+//var sent with POST to be queried
+$keywords = $_POST['keywords'];
+//send queries
+$query = "SELECT dataList as Column1, ID as Column2 FROM myTable WHERE dataList LIKE '%".$keywords."%' UNION SELECT dataList,  as Column1, ID as Column2 FROM myTableTwo WHERE dataList LIKE '%".$keywords."%' ORDER BY column2 ASC";
+
+
+
+//do not close if statement yet
+?>
+
+<!--Begin HTML formatting-->
+<br>
+<table id="myTable">
+<th>ID</th><th>Data</th>
+
+<?php
+
+//check for matches
+ if($result = $dbConfig->query($query)){ 
+        //get matches
+        while($row = $query->fetch_assoc()){ 
+			    
+          //get the datalist and explode it on your selected delimiter
+					$myData = "$row[Column1]"; 
+					$array =  explode(',', $numbers);
+            //filter that checks for value in exploded array items
+						foreach ($array as $key => $value) {
+							if (stripos($array[$key], $keywords) != false){	
+								echo "<tr><td>".$row['Column2']."</td><td>".$array[$key]."</td></tr>";
+							}
+						}; 
+          };	
+  };
+} //close statement
+?>
+
+</table>
